@@ -1,38 +1,44 @@
+"""
+COMP450 Fall 2022-2023
+The rules are if Human and Computer did same amount of moves and both doesn't have a chance to move its a tie
+- If p1 has more moves than other, and both are unable to move, p1 wins
+- If p1 did all his moves but p2 still have a chance to move, p2 wins
+"""
+
 import random
 import math
 
 #Check and return all available moves for selected positions
-def getAvailableMoves(board, pos):
+def getAvailableMoves(board,pos):
     moves = list()
     if pos == 1:
         if not board[2] != '': moves.append(2)
         if board[3] == '' and board[2] == '': moves.append(3)
         if not board[4] != '': moves.append(4)
-        if board[4] == '' and board[7] == '': moves.append(7)
         if not board[5] != '': moves.append(5)
+        if board[4] == '' and board[7] == '': moves.append(7)
         if board[5] == '' and board[9] == '': moves.append(9)
     elif pos == 2:
         if not board[1] != '': moves.append(1)
         if not board[3] != '': moves.append(3)
         if not board[4] != '': moves.append(4)
         if not board[5] != '': moves.append(5)
-        if board[5] == '' and board[8] == '': moves.append(8)
         if not board[6] != '': moves.append(6)
+        if board[8] == '' and board[5] == '': moves.append(8)
     elif pos == 3:
         if board[1] == '' and board[2] == '': moves.append(1)
         if not board[2] != '': moves.append(2)
         if not board[5] != '': moves.append(5)
-        if board[5] == '' and board[7] == '': moves.append(7)
         if not board[6] != '': moves.append(6)
-        if board[6] == '' and board[9] == '': moves.append(9)
+        if board[5] == '' and board[7] == '': moves.append(7)
+        if board[9] == '' and board[6] == '': moves.append(9)
     elif pos == 4:
         if not board[1] != '': moves.append(1)
         if not board[2] != '': moves.append(2)
         if not board[5] != '': moves.append(5)
-        if board[5] == '' and board[6] == '': moves.append(6)
+        if board[6] == '' and board[5] == '': moves.append(6)
         if not board[7] != '': moves.append(7)
         if not board[8] != '': moves.append(8)
-
     elif pos == 5:
         if not board[1] != '': moves.append(1)
         if not board[2] != '': moves.append(2)
@@ -42,6 +48,7 @@ def getAvailableMoves(board, pos):
         if not board[7] != '': moves.append(7)
         if not board[8] != '': moves.append(8)
         if not board[9] != '': moves.append(9)
+
     elif pos == 6:
         if not board[2] != '': moves.append(2)
         if not board[3] != '': moves.append(3)
@@ -50,12 +57,13 @@ def getAvailableMoves(board, pos):
         if not board[8] != '': moves.append(8)
         if not board[9] != '': moves.append(9)
     elif pos == 7:
-        if board[1] == '' and board[4] == '': moves.append(1)
-        if board[5] == '' and board[3] == '': moves.append(3)
+        if board[4] == '' and board[1] == '': moves.append(1)
+        if board[3] == '' and board[5] == '': moves.append(3)
         if not board[4] != '': moves.append(4)
         if not board[5] != '': moves.append(5)
         if not board[8] != '': moves.append(8)
-        if board[8] == '' and board[9] == '': moves.append(9)
+        if board[9] == '' and board[8] == '': moves.append(9)
+
     elif pos == 8:
         if board[2] == '' and board[5] == '': moves.append(2)
         if not board[4] != '': moves.append(4)
@@ -63,7 +71,6 @@ def getAvailableMoves(board, pos):
         if not board[6] != '': moves.append(6)
         if not board[7] != '': moves.append(7)
         if not board[9] != '': moves.append(9)
-
     elif pos == 9:
         if board[1] == '' and board[5] == '': moves.append(1)
         if board[3] == '' and board[6] == '': moves.append(3)
@@ -86,19 +93,18 @@ def getAvailableMoves(board, pos):
 total = 0 #This is for node scores
 copyTurn = 'player' #Checking current playing player
 maxEvalPos = 0 #Best move's position
-minEvalPos = math.inf
 
 
 # Alpha beta pruning algorithm, it choses the fastest and reliable move
 def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
     #declaring variables
-    global enemyLetter, playerLetter, total, copyTurn, maxEvalPos, minEvalPos
+    global enemyLetter,playerLetter,total,copyTurn,maxEvalPos
     total = 0
 
-    comT = getAvailableMoves(board, posai) #Available moves of computer
+    comT = getAvailableMoves(board,posai) #Available moves of computer
     humT = getAvailableMoves(board, posplayer) #Available moves of player
 
-    if len(comT) == len(humT) == 0:
+    if len(comT) == len(humT)== 0:
         if copyTurn == 'computer': #If both doesn't have any moves and next turn is computer's, its a lose of score
             total -= 1
             return total
@@ -130,14 +136,13 @@ def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
             if eval > maxEval:
                 maxEval = eval
                 maxEvalPos = child
-            maxEval = max(maxEval, eval)
             alpha = max(alpha, eval)
             if beta <= alpha:
                 break
         return maxEval
     #This is for minimizing nodes
     else:
-        minEval = math.inf
+        maxEval = math.inf
         children = getAvailableMoves(board, posplayer)
         for child in children:
             board[child] = playerLetter
@@ -147,18 +152,17 @@ def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
             eval = minimax(board, posplayer, posai, depth - 1, alpha, beta, True)
             posplayer = oldposplayer
             board[child] = ''
-            if eval < minEval:
-                minEval = eval
-                minEvalPos = child
-            minEval = min(minEval, eval)
-            alpha = min(alpha, eval)
+            if eval > maxEval:
+                maxEval = eval
+                maxEvalPos = child
+            beta = min(beta, eval)
             if beta <= alpha:
                 break
-        return minEval
+        return maxEval
 
 #Take the player's move till he/she choses a unfilled position.
 def getPlayerMove(board):
-    global playerLetter, lastHumPos, flag1
+    global playerLetter,lastHumPos,flag1
     while True:
         availables = getAvailableMoves(board, lastHumPos)
         printBoard(board)
@@ -177,22 +181,18 @@ def getPlayerMove(board):
 
 #Get computer's move, run the minimax
 def getComputerMove(board):
-    global enemyLetter, lastAiPos, flag2
+    global enemyLetter,lastAiPos,flag2
     availables = getAvailableMoves(board, lastAiPos)
     print("\nComputer's available moves are, ", availables)
     # This if is for win-lose-tie situations.
     if len(availables) == 0:
         flag2 = True
 
-    minimax(board, lastHumPos, lastAiPos, 9, -math.inf, +math.inf, True)
+    minimax(board,lastHumPos,lastAiPos ,9 ,-math.inf, math.inf,True)
     x = maxEvalPos
     lastAiPos = x #last seen position of ai, we are using this because minimax changes the value
-
-    if flag2 == False:
-        board[x] = enemyLetter
-        print("Computer played to,[", x, "]\n")
-    else:
-        print("There is no space to play! (comp)")
+    board[x] = enemyLetter
+    print("Computer played to,[", x ,"]\n")
 
 
 #Check if is board full to determine win lose, tie
@@ -203,16 +203,17 @@ def isBoardFull(board):
     return True
 
 def printBoard(board):
-    list1 = [board[1], board[2],board[3]]
-    list2 = [board[4], board[5], board[6]]
+    list1 = [board[1], board[2], board[3]]
+    list2 = [board[4],board[5], board[6]]
     list3 = [board[7], board[8], board[9]]
     print(list1)
     print(list2)
     print(list3)
 
 
+
 #Determining values
-theBoard = {1:'',2:'',3:'',4:'',5:'',6:'',7:'',8:'',9:''}
+theBoard = {1:'',2:'',3:'',4:'',5:'', 6:'', 7:'', 8:'', 9:''}
 isGamePlaying = True
 
 playerLetter = 'X'
@@ -234,7 +235,6 @@ if ran == 1:
     turn = 'computer'
 else:
     print("Player Goes First")
-
 
 while isGamePlaying:
     # If both players don't have any moves left
@@ -263,13 +263,15 @@ while isGamePlaying:
             break
     #If human starts from a corner he can win, middle is a lose or tie for human
     elif flag1 == False and flag2 == True:
+        availables = getAvailableMoves(theBoard, lastAiPos)
+        if len(availables) == 0:
+            print("Win")
+            break
         availables = getAvailableMoves(theBoard, lastHumPos)
         #This is for tie situation
         if len(availables) == 0:
             flag1 = True
-        else:
-            print("Win")
-            break
+
     #Do moves
     if turn == 'player':
         print("Player's turn")
@@ -278,6 +280,3 @@ while isGamePlaying:
     elif turn == 'computer':
         getComputerMove(theBoard)
         turn = 'player'
-    else:
-        continue
-

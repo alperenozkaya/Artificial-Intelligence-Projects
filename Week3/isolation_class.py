@@ -1,3 +1,10 @@
+"""
+COMP450 Fall 2022-2023
+The rules are if Human and Computer did same amount of moves and both doesn't have a chance to move its a tie
+- If p1 has more moves than other, and both are unable to move, p1 wins
+- If p1 did all his moves but p2 still have a chance to move, p2 wins
+"""
+
 import random
 import math
 
@@ -51,18 +58,18 @@ def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
 
     if len(comT) == len(humT)== 0:
         if copyTurn == 'computer': #If both doesn't have any moves and next turn is computer's, its a lose of score
-            total -= 1
+            total-=1
             return total
         else:
-            total += 1
+            total+=1
             return total
 
     elif len(comT) == 0: #If pc doesn't have any moves, its a lose of score
-        total -= 1
+        total-=1
         return total
     elif len(humT) == 0: #If human doesn't have any moves, its a win of score
         maxEvalPos = comT[0]
-        total += 1
+        total+=1
         return total
 
     #If player is maximizing on tree
@@ -133,7 +140,7 @@ def getComputerMove(board):
     if len(availables) == 0:
         flag2 = True
 
-    minimax(board,lastHumPos,lastAiPos, 5,-math.inf,math.inf,True)
+    minimax(board,lastHumPos,lastAiPos,5,-math.inf,math.inf,True)
     x = maxEvalPos
     lastAiPos = x #last seen position of ai, we are using this because minimax changes the value
     board[x] = enemyLetter
@@ -166,8 +173,8 @@ turn = 'player'
 lastHumPos = None
 lastAiPos = None
 
-flag1= False
-flag2= False
+flag1 = False
+flag2 = False
 
 # These are for chosing starter
 ran = random.randint(0, 1)
@@ -221,4 +228,3 @@ while isGamePlaying:
     elif turn == 'computer':
         getComputerMove(theBoard)
         turn = 'player'
-

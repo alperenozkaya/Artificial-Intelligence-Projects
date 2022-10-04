@@ -89,7 +89,7 @@ maxEvalPos = 0 #Best move's position
 
 
 # Alpha beta pruning algorithm, it choses the fastest and reliable move
-def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
+def minimax(board, posplayer, posai, depth, alpha, beta, ismax):
     #declaring variables
     global enemyLetter, playerLetter, total, copyTurn, maxEvalPos
     total = 0
@@ -105,10 +105,10 @@ def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
             total += 1
             return total
 
-    elif len(comT) == 0: #If pc doesn't have any moves, its a lose of score
+    elif len(comT) == 0 and len(humT) != 0: #If pc doesn't have any moves, its a lose of score
         total -= 1
         return total
-    elif len(humT) == 0: #If human doesn't have any moves, its a win of score
+    elif len(humT) == 0 and len(comT) != 0: #If human doesn't have any moves, its a win of score
         maxEvalPos = comT[0]
         total += 1
         return total
@@ -116,14 +116,14 @@ def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
     #If player is maximizing on tree
     if ismax:
         maxEval = -math.inf
-        children = getAvailableMoves(board,posai) # All children nodes of selected node
+        children = getAvailableMoves(board, posai) # All children nodes of selected node
         # Check every single child of Player moves and calculate scores
         for child in children:
             board[child] = enemyLetter # Put the letter for trying the move
             oldposai = posai # Hold old position to use it later
             posai = child # change ai's position to try new child
             copyTurn = 'player' # change playing player
-            eval = minimax(board,posplayer,posai,depth-1,alpha,beta,False)
+            eval = minimax(board, posplayer, posai, depth - 1,alpha,beta,False)
             posai = oldposai # after each evaluation give its first value to ai's pos again
             board[child] = '' # clear the move
             if eval > maxEval:
@@ -147,7 +147,7 @@ def minimax(board,posplayer,posai,depth,alpha,beta,ismax):
             board[child] = ''
             if eval < minEval:
                 minEval = eval
-            minEval = min(minEval, eval)
+            #minEval = min(minEval, eval)
             alpha = min(alpha, eval)
             if beta <= alpha:
                 break
@@ -167,7 +167,7 @@ def getPlayerMove(board):
         x = int(input("Where do you want to play to?\n"))
         if x in availables:
             board[x] = playerLetter
-            lastHumPos= x #Last seen position of human
+            lastHumPos = x #Last seen position of human
             break
         else:
             print("This place is full, select new one\n")
@@ -181,7 +181,7 @@ def getComputerMove(board):
     if len(availables) == 0:
         flag2 = True
 
-    minimax(board, lastHumPos, lastAiPos, 500000, -math.inf, +math.inf, True)
+    minimax(board, lastHumPos, lastAiPos, 9, -math.inf, +math.inf, True)
     x = maxEvalPos
     lastAiPos = x #last seen position of ai, we are using this because minimax changes the value
     board[x] = enemyLetter
@@ -196,7 +196,7 @@ def isBoardFull(board):
     return True
 
 def printBoard(board):
-    list1 = [board[1], board[2],board[3]]
+    list1 = [board[1], board[2], board[3]]
     list2 = [board[4], board[5], board[6]]
     list3 = [board[7], board[8], board[9]]
     print(list1)
@@ -263,6 +263,7 @@ while isGamePlaying:
         else:
             print("Win")
             break
+
     #Do moves
     if turn == 'player':
         print("Player's turn")
